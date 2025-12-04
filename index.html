@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radhe Souvik | Number ↔ Word Converter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6B35;
+            --primary-light: #FF8E53;
+            --primary-dark: #E55A2B;
+            --secondary: #00C9FF;
+            --secondary-light: #92FE9D;
+            --accent: #FFD166;
+            --dark: #1A1A2E;
+            --darker: #0F0F1C;
+            --light: #F8F9FA;
+            --gray: #6C757D;
+            --border: #2D3047;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
+            --radius: 20px;
+            --radius-sm: 12px;
+            --gradient: linear-gradient(135deg, #FF6B35 0%, #00C9FF 50%, #FFD166 100%);
+            --gradient-card: linear-gradient(145deg, #1E1E2E 0%, #25253E 100%);
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--darker);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--light);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(0, 201, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 209, 102, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        /* Header */
+        header {
+            background: var(--gradient-card);
+            padding: 30px 40px;
+            text-align: center;
+            position: relative;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .header-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            box-shadow: 0 0 30px rgba(255, 107, 53, 0.5);
+            animation: pulse 3s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 20px rgba(255, 107, 53, 0.5); }
+            100% { box-shadow: 0 0 40px rgba(0, 201, 255, 0.7); }
+        }
+
+        .logo i {
+            font-size: 2.2rem;
+            color: white;
+        }
+
+        .brand-text {
+            text-align: left;
+        }
+
+        .brand-text h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .brand-text .tagline {
+            font-size: 1.2rem;
+            color: var(--secondary-light);
+            font-weight: 300;
+        }
+
+        .signature {
+            position: absolute;
+            bottom: 15px;
+            right: 30px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+        }
+
+        .signature i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+
+        /* Converter Section */
+        .converter-section {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .converter-section {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+
+        .converter-card {
+            background: var(--gradient-card);
+            border-radius: var(--radius);
+            padding: 35px 30px;
+            height: 100%;
+            border: 1px solid var(--border);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .converter-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--gradient);
+        }
+
+        .converter-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            color: white;
+            font-size: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--primary);
+        }
+
+        .number-icon {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .word-icon {
+            background: linear-gradient(135deg, var(--secondary) 0%, #0088CC 100%);
+        }
+
+        .card-title h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.9rem;
+            font-weight: 600;
+            color: var(--light);
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .card-title p {
+            color: var(--secondary-light);
+            font-size: 1rem;
+        }
+
+        /* Inputs & Buttons */
+        .input-group {
+            margin-bottom: 30px;
+        }
+
+        .input-label {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--accent);
+            font-size: 1.1rem;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .input-label i {
+            margin-right: 12px;
+            color: var(--primary);
+        }
+
+        .input-field, .textarea-field {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 1.1rem;
+            font-family: 'Exo 2', sans-serif;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--light);
+        }
+
+        .textarea-field {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        .input-field:focus, .textarea-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .convert-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 20px 30px;
+            border-radius: var(--radius-sm);
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            letter-spacing: 1px;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .convert-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .convert-btn:hover::before {
+            left: 100%;
+        }
+
+        .convert-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        .convert-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Results */
+        .result-container {
+            margin-top: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-sm);
+            padding: 25px;
+            border-left: 5px solid var(--primary);
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 150px;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .result-label i {
+            margin-right: 12px;
+            color: var(--primary);
+        }
+
+        .result-content {
+            font-size: 1.6rem;
+            color: var(--light);
+            word-break: break-word;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* Swap Button */
+        .swap-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 60px;
+        }
+
+        @media (max-width: 900px) {
+            .swap-container {
+                margin-top: 0;
+                margin-bottom: 20px;
+            }
+        }
+
+        .swap-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.4s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            border: 3px solid var(--dark);
+        }
+
+        .swap-btn:hover {
+            transform: rotate(180deg) scale(1.1);
+            box-shadow: 0 15px 40px rgba(0, 201, 255, 0.4);
+        }
+
+        /* Examples */
+        .examples-section {
+            background: var(--gradient-card);
+            padding: 40px;
+            border-top: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--light);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        .section-title i {
+            margin-right: 20px;
+            color: var(--primary);
+            background: rgba(255, 107, 53, 0.2);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .example-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: var(--radius-sm);
+            padding: 25px;
+            border-top: 4px solid var(--primary);
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .example-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(0, 201, 255, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .example-card:hover::before {
+            opacity: 1;
+        }
+
+        .example-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-top-color: var(--secondary);
+        }
+
+        .example-card.green {
+            border-top-color: var(--secondary);
+        }
+
+        .example-title {
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+            position: relative;
+            z-index: 1;
+        }
+
+        .example-title i {
+            margin-right: 12px;
+            color: var(--primary);
+        }
+
+        .example-card.green .example-title i {
+            color: var(--secondary);
+        }
+
+        .example-content {
+            color: var(--light);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .example-number {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .example-card.green .example-number {
+            color: var(--secondary);
+        }
+
+        .example-text {
+            color: var(--light);
+        }
+
+        /* Footer - Simplified */
+        footer {
+            background: rgba(15, 15, 28, 0.9);
+            color: var(--light);
+            padding: 20px 40px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-text {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .footer-text strong {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .converter-card {
+            animation: slideIn 0.6s ease forwards;
+        }
+
+        .converter-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .converter-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        /* Success/Error Colors */
+        .success {
+            color: var(--secondary-light) !important;
+        }
+
+        .error {
+            color: #FF6B6B !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-glow"></div>
+            <div class="brand">
+                <div class="logo">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>RADHE SOUVIK</h1>
+                    <p class="tagline">NUMBER ↔ WORD CONVERTER</p>
+                </div>
+            </div>
+            <div class="signature">
+                <i class="fas fa-code"></i> Crafted with precision by Radhe Souvik
+            </div>
+        </header>
+        
+        <div class="converter-section">
+            <!-- Number to Word Converter -->
+            <div class="converter-card">
+                <div class="card-header">
+                    <div class="card-icon number-icon">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="card-title">
+                        <h2>NUMBER TO TEXT</h2>
+                        <p>Transform digits into written words</p>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-label">
+                        <i class="fas fa-hashtag"></i>
+                        ENTER NUMBER:
+                    </div>
+                    <input type="text" id="numberInput" class="input-field" placeholder="e.g. 12345 or 1,234.56">
+                </div>
+                
+                <button id="convertToWordBtn" class="convert-btn">
+                    <i class="fas fa-magic"></i> CONVERT TO WORDS
+                </button>
+                
+                <div class="result-container">
+                    <div class="result-label">
+                        <i class="fas fa-font"></i> RESULT IN WORDS:
+                    </div>
+                    <div id="wordResult" class="result-content">Your converted text will appear here</div>
+                </div>
+            </div>
+            
+            <!-- Swap Button -->
+            <div class="swap-container">
+                <button id="swapBtn" class="swap-btn">
+                    <i class="fas fa-exchange-alt"></i>
+                </button>
+            </div>
+            
+            <!-- Word to Number Converter -->
+            <div class="converter-card">
+                <div class="card-header">
+                    <div class="card-icon word-icon">
+                        <i class="fas fa-font"></i>
+                    </div>
+                    <div class="card-title">
+                        <h2>TEXT TO NUMBER</h2>
+                        <p>Convert written words to digits</p>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-label">
+                        <i class="fas fa-keyboard"></i>
+                        ENTER TEXT:
+                    </div>
+                    <textarea id="wordInput" class="textarea-field" placeholder="e.g. one thousand two hundred thirty-four"></textarea>
+                </div>
+                
+                <button id="convertToNumberBtn" class="convert-btn">
+                    <i class="fas fa-calculator"></i> CONVERT TO NUMBER
+                </button>
+                
+                <div class="result-container">
+                    <div class="result-label">
+                        <i class="fas fa-hashtag"></i> RESULT AS NUMBER:
+                    </div>
+                    <div id="numberResult" class="result-content">Your converted number will appear here</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Examples Section -->
+        <div class="examples-section">
+            <div class="section-title">
+                <i class="fas fa-lightbulb"></i> TRY THESE EXAMPLES
+            </div>
+            
+            <div class="examples-grid">
+                <div class="example-card">
+                    <div class="example-title">
+                        <i class="fas fa-bolt"></i> BASIC NUMBER
+                    </div>
+                    <div class="example-content">
+                        <div class="example-number">42</div>
+                        <div class="example-text">Forty-two</div>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-title">
+                        <i class="fas fa-chart-line"></i> DECIMAL NUMBER
+                    </div>
+                    <div class="example-content">
+                        <div class="example-number">1,234.56</div>
+                        <div class="example-text">One thousand two hundred thirty-four point five six</div>
+                    </div>
+                </div>
+                
+                <div class="example-card green">
+                    <div class="example-title">
+                        <i class="fas fa-rocket"></i> LARGE NUMBER
+                    </div>
+                    <div class="example-content">
+                        <div class="example-number">1,000,000</div>
+                        <div class="example-text">One million</div>
+                    </div>
+                </div>
+                
+                <div class="example-card green">
+                    <div class="example-title">
+                        <i class="fas fa-star"></i> TEXT TO NUMBER
+                    </div>
+                    <div class="example-content">
+                        <div class="example-number">Seventy-eight</div>
+                        <div class="example-text">78</div>
+                    </div>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-title">
+                        <i class="fas fa-gem"></i> COMPLEX NUMBER
+                    </div>
+                    <div class="example-content">
+                        <div class="example-number">12,345,678.90</div>
+                        <div class="example-text">Twelve million three hundred forty-five thousand six hundred seventy-eight point nine zero</div>
+                    </div>
+                </div>
+                
+                <div class="example-card green">
+                    <div class="example-title">
+                        <i class="fas fa-crown"></i> TEXT EXAMPLE
+                    </div>
+                    <div class="example-content">
+                        <div class="example-number">Nine hundred ninety-nine</div>
+                        <div class="example-text">999</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="footer-text">
+                <p><strong>RADHE SOUVIK</strong> | Number ↔ Word Converter</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const numberInput = document.getElementById('numberInput');
+        const wordInput = document.getElementById('wordInput');
+        const convertToWordBtn = document.getElementById('convertToWordBtn');
+        const convertToNumberBtn = document.getElementById('convertToNumberBtn');
+        const wordResult = document.getElementById('wordResult');
+        const numberResult = document.getElementById('numberResult');
+        const swapBtn = document.getElementById('swapBtn');
+        
+        // Color palette
+        const colors = {
+            primary: '#FF6B35',
+            secondary: '#00C9FF',
+            accent: '#FFD166',
+            error: '#FF6B6B',
+            success: '#92FE9D'
+        };
+        
+        // Number to word conversion
+        function numberToWords(num) {
+            // Remove commas and convert to string
+            const numStr = num.toString().replace(/,/g, '');
+            
+            // Check if it's a valid number
+            if (!/^-?\d+(\.\d+)?$/.test(numStr)) {
+                return "❌ Please enter a valid number";
+            }
+            
+            // Handle negative numbers
+            let isNegative = false;
+            let number = numStr;
+            if (number.startsWith('-')) {
+                isNegative = true;
+                number = number.substring(1);
+            }
+            
+            // Check if number is too large
+            if (number.length > 15) {
+                return "⚠️ Number is too large to convert (max 15 digits)";
+            }
+            
+            // Check if it has decimal part
+            if (number.includes('.')) {
+                const parts = number.split('.');
+                const integerPart = parts[0];
+                const decimalPart = parts[1];
+                
+                let result = convertIntegerToWords(integerPart);
+                
+                if (decimalPart && decimalPart !== '0') {
+                    result += ' point';
+                    for (let i = 0; i < decimalPart.length; i++) {
+                        result += ' ' + convertDigitToWord(decimalPart[i]);
+                    }
+                }
+                
+                return isNegative ? 'Minus ' + result : result;
+            } else {
+                const result = convertIntegerToWords(number);
+                return isNegative ? 'Minus ' + result : result;
+            }
+        }
+        
+        function convertIntegerToWords(numStr) {
+            // Remove leading zeros
+            numStr = numStr.replace(/^0+/, '') || '0';
+            
+            // Special case for zero
+            if (numStr === '0') {
+                return 'Zero';
+            }
+            
+            const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+            const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+            const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+            const thousands = ['', 'Thousand', 'Million', 'Billion', 'Trillion'];
+            
+            // Split number into groups of three digits
+            const numGroups = [];
+            for (let i = numStr.length; i > 0; i -= 3) {
+                numGroups.push(numStr.substring(Math.max(0, i - 3), i));
+            }
+            
+            // Convert each group to words
+            let result = '';
+            for (let i = numGroups.length - 1; i >= 0; i--) {
+                const group = parseInt(numGroups[i]);
+                
+                if (group > 0) {
+                    result += convertThreeDigitGroup(group) + ' ' + thousands[i] + ' ';
+                }
+            }
+            
+            return result.trim();
+        }
+        
+        function convertThreeDigitGroup(num) {
+            const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+            const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+            const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+            
+            let result = '';
+            const hundreds = Math.floor(num / 100);
+            const remainder = num % 100;
+            
+            if (hundreds > 0) {
+                result += ones[hundreds] + ' Hundred';
+                if (remainder > 0) {
+                    result += ' and ';
+                }
+            }
+            
+            if (remainder >= 10 && remainder <= 19) {
+                result += teens[remainder - 10];
+            } else {
+                const ten = Math.floor(remainder / 10);
+                const one = remainder % 10;
+                
+                if (ten > 0) {
+                    result += tens[ten];
+                    if (one > 0) {
+                        result += '-' + ones[one];
+                    }
+                } else if (one > 0) {
+                    result += ones[one];
+                }
+            }
+            
+            return result;
+        }
+        
+        function convertDigitToWord(digit) {
+            const digitWords = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+            return digitWords[parseInt(digit)] || '';
+        }
+        
+        // Word to number conversion
+        function wordsToNumber(wordStr) {
+            if (!wordStr.trim()) {
+                return "❌ Please enter words to convert";
+            }
+            
+            // Convert to lowercase and clean up
+            const words = wordStr.toLowerCase().trim().replace(/\s+/g, ' ').split(' ');
+            
+            // Check for negative
+            let isNegative = false;
+            if (words[0] === 'minus' || words[0] === 'negative') {
+                isNegative = true;
+                words.shift();
+            }
+            
+            let result = 0;
+            let current = 0;
+            let decimalPart = '';
+            let inDecimal = false;
+            
+            // Word to number mappings
+            const wordMap = {
+                'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4,
+                'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9,
+                'ten': 10, 'eleven': 11, 'twelve': 12, 'thirteen': 13,
+                'fourteen': 14, 'fifteen': 15, 'sixteen': 16, 'seventeen': 17,
+                'eighteen': 18, 'nineteen': 19, 'twenty': 20, 'thirty': 30,
+                'forty': 40, 'fifty': 50, 'sixty': 60, 'seventy': 70,
+                'eighty': 80, 'ninety': 90
+            };
+            
+            const multipliers = {
+                'hundred': 100,
+                'thousand': 1000,
+                'million': 1000000,
+                'billion': 1000000000,
+                'trillion': 1000000000000
+            };
+            
+            for (let i = 0; i < words.length; i++) {
+                const word = words[i].replace(/[^a-z]/g, '');
+                
+                // Check for "point" to start decimal part
+                if (word === 'point') {
+                    inDecimal = true;
+                    continue;
+                }
+                
+                if (inDecimal) {
+                    // Handle decimal part
+                    if (wordMap.hasOwnProperty(word)) {
+                        decimalPart += wordMap[word].toString();
+                    } else if (word.match(/^\d+$/)) {
+                        decimalPart += word;
+                    }
+                } else {
+                    // Handle integer part
+                    if (wordMap.hasOwnProperty(word)) {
+                        current += wordMap[word];
+                    } else if (word === 'hundred') {
+                        current *= 100;
+                    } else if (multipliers.hasOwnProperty(word)) {
+                        current *= multipliers[word];
+                        result += current;
+                        current = 0;
+                    } else if (word.includes('-')) {
+                        // Handle hyphenated numbers like "twenty-one"
+                        const parts = word.split('-');
+                        for (const part of parts) {
+                            if (wordMap.hasOwnProperty(part)) {
+                                current += wordMap[part];
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Add any remaining current value
+            result += current;
+            
+            // Format the result
+            let formattedResult = result.toString();
+            if (decimalPart) {
+                formattedResult += '.' + decimalPart;
+            }
+            
+            // Add commas for thousands separators
+            formattedResult = addCommas(formattedResult);
+            
+            return isNegative ? '-' + formattedResult : formattedResult;
+        }
+        
+        function addCommas(numberStr) {
+            // Check if it's a decimal number
+            if (numberStr.includes('.')) {
+                const parts = numberStr.split('.');
+                return parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '.' + parts[1];
+            } else {
+                return numberStr.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            }
+        }
+        
+        // Event Listeners
+        convertToWordBtn.addEventListener('click', function() {
+            const number = numberInput.value.trim();
+            if (!number) {
+                wordResult.textContent = "❌ Please enter a number";
+                wordResult.classList.add('error');
+                wordResult.classList.remove('success');
+                return;
+            }
+            
+            const result = numberToWords(number);
+            wordResult.textContent = result;
+            
+            if (result.startsWith('❌') || result.startsWith('⚠️')) {
+                wordResult.classList.add('error');
+                wordResult.classList.remove('success');
+            } else {
+                wordResult.classList.add('success');
+                wordResult.classList.remove('error');
+            }
+            
+            // Button animation
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+        });
+        
+        convertToNumberBtn.addEventListener('click', function() {
+            const words = wordInput.value.trim();
+            if (!words) {
+                numberResult.textContent = "❌ Please enter words";
+                numberResult.classList.add('error');
+                numberResult.classList.remove('success');
+                return;
+            }
+            
+            const result = wordsToNumber(words);
+            numberResult.textContent = result;
+            
+            if (result.startsWith('❌')) {
+                numberResult.classList.add('error');
+                numberResult.classList.remove('success');
+            } else {
+                numberResult.classList.add('success');
+                numberResult.classList.remove('error');
+            }
+            
+            // Button animation
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 150);
+        });
+        
+        // Swap button functionality
+        swapBtn.addEventListener('click', function() {
+            const numberValue = numberInput.value;
+            const wordValue = wordInput.value;
+            const wordResultValue = wordResult.textContent;
+            const numberResultValue = numberResult.textContent;
+            
+            // Swap input values
+            numberInput.value = wordValue;
+            wordInput.value = numberValue;
+            
+            // Swap results if they're not the default messages
+            if (!wordResultValue.includes("Your converted") && !numberResultValue.includes("Your converted")) {
+                wordResult.textContent = numberResultValue;
+                numberResult.textContent = wordResultValue;
+                
+                // Swap classes
+                if (wordResult.classList.contains('success') || wordResult.classList.contains('error')) {
+                    const wordClasses = wordResult.className;
+                    const numberClasses = numberResult.className;
+                    
+                    wordResult.className = 'result-content ' + numberClasses.split(' ').slice(1).join(' ');
+                    numberResult.className = 'result-content ' + wordClasses.split(' ').slice(1).join(' ');
+                }
+            } else {
+                // Clear results
+                wordResult.textContent = "Your converted text will appear here";
+                wordResult.className = 'result-content';
+                numberResult.textContent = "Your converted number will appear here";
+                numberResult.className = 'result-content';
+            }
+            
+            // Button animation
+            this.style.transform = 'rotate(180deg) scale(1.1)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 400);
+        });
+        
+        // Allow Enter key to trigger conversion
+        numberInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                convertToWordBtn.click();
+            }
+        });
+        
+        wordInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                convertToNumberBtn.click();
+            }
+        });
+        
+        // Add example click functionality
+        document.querySelectorAll('.example-card').forEach(item => {
+            item.addEventListener('click', function() {
+                const numberElement = this.querySelector('.example-number');
+                const wordElement = this.querySelector('.example-text');
+                
+                // Check if the example is a number or word
+                if (/^[\d,.-]+$/.test(numberElement.textContent.trim())) {
+                    // It's a number example
+                    numberInput.value = numberElement.textContent.trim();
+                    convertToWordBtn.click();
+                } else {
+                    // It's a word example
+                    wordInput.value = numberElement.textContent.trim();
+                    convertToNumberBtn.click();
+                }
+                
+                // Visual feedback
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 300);
+            });
+        });
+        
+        // Initialize with some examples
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                numberInput.value = "2024";
+                convertToWordBtn.click();
+                
+                setTimeout(() => {
+                    wordInput.value = "Radhe Souvik presents: one thousand twenty-four";
+                    convertToNumberBtn.click();
+                }, 800);
+            }, 500);
+        });
+        
+        // Add glow effect to inputs on focus
+        numberInput.addEventListener('focus', function() {
+            this.style.boxShadow = '0 0 0 3px rgba(255, 107, 53, 0.3)';
+        });
+        
+        numberInput.addEventListener('blur', function() {
+            this.style.boxShadow = '';
+        });
+        
+        wordInput.addEventListener('focus', function() {
+            this.style.boxShadow = '0 0 0 3px rgba(0, 201, 255, 0.3)';
+        });
+        
+        wordInput.addEventListener('blur', function() {
+            this.style.boxShadow = '';
+        });
+    </script>
+</body>
+</html>
